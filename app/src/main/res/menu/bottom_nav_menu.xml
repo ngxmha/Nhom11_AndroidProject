@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navNhaSach"
+        android:icon="@drawable/ic_bookstore"
+        android:title="Nhà sách" />
+
+    <item
+        android:id="@+id/navSach"
+        android:icon="@drawable/ic_book"
+        android:title="Sách" />
+
+    <item
+        android:id="@+id/navHoaDon"
+        android:icon="@drawable/ic_bill"
+        android:title="Hóa đơn" />
+
+
+</menu>
