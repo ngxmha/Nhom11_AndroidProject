@@ -14,6 +14,7 @@
         tools:targetApi="31">
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.SignUpActivity" />
+        <activity android:name=".activity.BookFormActivity" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">
