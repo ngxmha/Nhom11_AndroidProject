@@ -41,16 +41,19 @@ public class MainActivity extends AppCompatActivity {
 
         // Chuyển fragment theo bottom nav
         bottomNav.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.navSach) {
+            if (item.getItemId() == R.id.navNhaSach) {
                 viewPager.setCurrentItem(0);
                 return true;
-            } else if (item.getItemId() == R.id.navHoaDon) {
+            } else if (item.getItemId() == R.id.navSach) {
                 viewPager.setCurrentItem(1);
                 return true;
             }
-            return false;
+            else {
+                viewPager.setCurrentItem(2);
+                return true;
+            }
         });
 
-        bottomNav.setSelectedItemId(R.id.navHoaDon);
+        bottomNav.setSelectedItemId(R.id.navNhaSach);
     }
 }

@@ -42,7 +42,7 @@ public class BillFragment extends Fragment {
         recyclerBill.setAdapter(adapter);
 
 //        Fake data để test
-        loadPharmacyData();
+        loadBillData();
 
         // Xử lí nút FAB
         fab.setOnClickListener(v -> {
@@ -52,7 +52,7 @@ public class BillFragment extends Fragment {
         return view;
     }
 
-    private void loadPharmacyData() {
+    private void loadBillData() {
         billList.add(new Bill("HD001", "Nhà sách PTIT", "123000", "01/01/2025 - 12:00"));
         billList.add(new Bill("HD002", "Nhà sách HUST", "150000", "01/01/2025 - 12:00"));
         billList.add(new Bill("HD003", "Nhà sách KMA", "56000", "01/01/2025 - 12: 00"));
