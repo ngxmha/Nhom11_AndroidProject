@@ -8,6 +8,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.nhom11.qlnhasach.fragment.NhaSachFragment;
 import com.nhom11.qlnhasach.fragment.BillFragment;
 import com.nhom11.qlnhasach.fragment.BookFragment;
+import com.nhom11.qlnhasach.fragment.ThongKeFragment;
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
     public ViewPagerAdapter(@NonNull Fragment fragment) {
@@ -28,6 +29,8 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
                 return new BookFragment();
             case 2:
                 return new BillFragment();
+            case 3:
+                return new ThongKeFragment();
             default:
                 return new NhaSachFragment();
         }
@@ -35,6 +38,6 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 3; // Số lượng Fragment bạn có
+        return 4; // Số lượng Fragment bạn có
     }
 }

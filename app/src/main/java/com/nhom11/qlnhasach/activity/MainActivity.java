@@ -48,8 +48,12 @@ public class MainActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(1);
                 return true;
             }
-            else {
+            else if (item.getItemId() == R.id.navHoaDon) {
                 viewPager.setCurrentItem(2);
+                return true;
+            }
+            else {
+                viewPager.setCurrentItem(3);
                 return true;
             }
         });
