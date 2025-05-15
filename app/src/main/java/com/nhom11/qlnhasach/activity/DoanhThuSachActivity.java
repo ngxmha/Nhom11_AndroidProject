@@ -43,11 +43,6 @@ public class DoanhThuSachActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doanh_thu_sach);
 
-        // Toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Doanh thu sách");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         tvYear = findViewById(R.id.tv_year);
         switchAll = findViewById(R.id.switch_all);
@@ -61,18 +56,18 @@ public class DoanhThuSachActivity extends AppCompatActivity {
         btnPrevYear.setOnClickListener(v -> {
             currentYear--;
             tvYear.setText(String.valueOf(currentYear));
-            loadBarChartData();
+//            loadBarChartData();
         });
 
         btnNextYear.setOnClickListener(v -> {
             currentYear++;
             tvYear.setText(String.valueOf(currentYear));
-            loadBarChartData();
+//            loadBarChartData();
         });
 
         // Sự kiện Switch
         switchAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            loadBarChartData();
+//            loadBarChartData();
         });
     }
 
@@ -80,7 +75,7 @@ public class DoanhThuSachActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         db = new DBHelper(this).getReadableDatabase();
-        loadBarChartData();
+//        loadBarChartData();
     }
 
     @Override

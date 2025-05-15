@@ -44,12 +44,6 @@ public class DoanhThuNhaSachActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doanh_thu_nha_sach);
 
-        // Toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Doanh thu nhà sách");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         tvNam = findViewById(R.id.tvNam);
         barChart = findViewById(R.id.barChart);
         ImageView btnPrevYear = findViewById(R.id.btnPrevYear);
@@ -60,13 +54,13 @@ public class DoanhThuNhaSachActivity extends AppCompatActivity {
         btnPrevYear.setOnClickListener(v -> {
             namHienTai--;
             tvNam.setText(String.valueOf(namHienTai));
-            loadBarChartData();
+//            loadBarChartData();
         });
 
         btnNextYear.setOnClickListener(v -> {
             namHienTai++;
             tvNam.setText(String.valueOf(namHienTai));
-            loadBarChartData();
+//            loadBarChartData();
         });
     }
 
@@ -74,7 +68,7 @@ public class DoanhThuNhaSachActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         db = new DBHelper(this).getReadableDatabase();
-        loadBarChartData();
+//        loadBarChartData();
     }
 
     @Override

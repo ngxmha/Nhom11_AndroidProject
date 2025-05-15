@@ -19,7 +19,8 @@
             android:label="Lập hóa đơn"/>
         <activity android:name=".activity.SuaNhaSachActivity" />
         <activity android:name=".activity.ThemNhaSachActivity" />
-        <activity android:name=".activity.DoanhThuSachActivity" />
+        <activity android:name=".activity.DoanhThuSachActivity"
+            android:label="Thống kê nhà sách"/>
         <activity android:name=".activity.DoanhThuNhaSachActivity" />
 
         <activity

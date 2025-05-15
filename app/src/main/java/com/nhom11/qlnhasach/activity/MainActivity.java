@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Đã đăng nhập → load giao diện
+        new DBHelper(this).createSampleData();
         setContentView(R.layout.activity_main);
 
         viewPager = findViewById(R.id.viewPager);
