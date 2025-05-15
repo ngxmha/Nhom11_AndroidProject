@@ -104,4 +104,18 @@ public class BookFragment extends Fragment {
         bookList.add(new Book("B004", "Cấu trúc dữ liệu nâng cao", "Trần Thị D", 100000));
         bookList.add(new Book("B005", "Lập trình Java", "Lê Thị E", 80000));
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Xóa danh sách cũ và tải lại từ cơ sở dữ liệu
+        bookList.clear();
+        bookList.addAll(new DBHelper(requireContext()).getAllBooks());
+
+        // Lấy truy vấn tìm kiếm hiện tại
+        String currentQuery = edSearch.getText().toString().trim();
+
+        // Áp dụng lại bộ lọc với truy vấn hiện tại
+        filterBooks(currentQuery);
+    }
 }

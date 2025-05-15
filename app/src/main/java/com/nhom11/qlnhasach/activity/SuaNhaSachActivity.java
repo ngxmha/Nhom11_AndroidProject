@@ -88,6 +88,9 @@ public class SuaNhaSachActivity extends AppCompatActivity {
                         nhaSachCanSua.setDiaChi(diaChiMoi);
                         nhaSachCanSua.setIconUri(iconUriMoi);
 
+                        // Sửa nhà sách trong DB
+                        new DBHelper(SuaNhaSachActivity.this).updateBookStore(nhaSachCanSua);
+
                         Intent resultIntent = new Intent();
                         resultIntent.putExtra("nhaSachDaSua", nhaSachCanSua); // Truyền đối tượng đã sửa
                         setResult(RESULT_OK, resultIntent);

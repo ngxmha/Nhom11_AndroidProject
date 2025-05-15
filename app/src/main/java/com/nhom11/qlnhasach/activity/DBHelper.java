@@ -256,6 +256,37 @@ public class DBHelper extends SQLiteOpenHelper {
         return nhaSachList;
     }
 
+    public long addBookStore(NhaSach nhaSach) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("maNhaSach", nhaSach.getMaNhaSach());
+        values.put("tenNhaSach", nhaSach.getTenNhaSach());
+        values.put("diaChi", nhaSach.getDiaChi());
+        values.put("iconUri", nhaSach.getIconUri());
+        long id = db.insert(DBHelper.TABLE_BOOKSTORES, null, values);
+        db.close();
+        return id;
+    }
+
+    public boolean updateBookStore(NhaSach nhaSach) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("tenNhaSach", nhaSach.getTenNhaSach());
+        values.put("diaChi", nhaSach.getDiaChi());
+        values.put("iconUri", nhaSach.getIconUri());
+        int rows = db.update(TABLE_BOOKSTORES, values, "maNhaSach = ?",
+                new String[]{nhaSach.getMaNhaSach()});
+        db.close();
+        return rows > 0;
+    }
+
+    public boolean deleteBookStore(String maNhaSach) {
+        SQLiteDatabase db = getWritableDatabase();
+        int rows = db.delete(TABLE_BOOKSTORES, "maNhaSach = ?", new String[]{maNhaSach});
+        db.close();
+        return rows > 0;
+    }
+
     //====================== Sách =====================
     public List<Book> getAllBooks() {
         List<Book> bookList = new ArrayList<>();
@@ -284,5 +315,17 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return bookList;
+    }
+
+    public long addBook(Book book) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("maSach", book.getMaSach());
+        values.put("tenSach", book.getTenSach());
+        values.put("tacGia", book.getTacGia());
+        values.put("gia", book.getGia());
+        long id = db.insert(TABLE_BOOKS, null, values);
+        db.close();
+        return id;
     }
 }

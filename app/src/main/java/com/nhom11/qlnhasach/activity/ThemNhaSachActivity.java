@@ -71,6 +71,10 @@ public class ThemNhaSachActivity extends AppCompatActivity {
 
                 if (!maNhaSach.isEmpty() && !tenNhaSach.isEmpty() && !diaChi.isEmpty()) {
                     NhaSach nhaSachMoi = new NhaSach(maNhaSach, tenNhaSach, diaChi, iconUriString);
+
+                    // Thêm nhà sách mới vào DB
+                    new DBHelper(ThemNhaSachActivity.this).addBookStore(nhaSachMoi);
+
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("nhaSachMoi", nhaSachMoi); // Truyền đối tượng NhaSach
                     setResult(RESULT_OK, resultIntent); // Thiết lập kết quả OK
