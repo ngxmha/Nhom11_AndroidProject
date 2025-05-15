@@ -1,5 +1,6 @@
 package com.nhom11.qlnhasach.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.nhom11.qlnhasach.R;
+import com.nhom11.qlnhasach.activity.CreateBillActivity;
 import com.nhom11.qlnhasach.adapter.BillAdapter;
 import com.nhom11.qlnhasach.model.Bill;
 
@@ -40,18 +42,17 @@ public class BillFragment extends Fragment {
         recyclerBill.setAdapter(adapter);
 
 //        Fake data để test
-        loadPharmacyData();
+        loadBillData();
 
-        // Bấm nút FAB để thêm mới (ví dụ)
+        // Xử lí nút FAB
         fab.setOnClickListener(v -> {
-            Bill newBill = new Bill("HD001", "Nhà sách mới", "50000", "30/12/2025 - 12:00");
-            billList.add(newBill);
-            adapter.notifyItemInserted(billList.size() - 1);
+            Intent intent = new Intent(getContext(), CreateBillActivity.class);
+            startActivity(intent);
         });
         return view;
     }
 
-    private void loadPharmacyData() {
+    private void loadBillData() {
         billList.add(new Bill("HD001", "Nhà sách PTIT", "123000", "01/01/2025 - 12:00"));
         billList.add(new Bill("HD002", "Nhà sách HUST", "150000", "01/01/2025 - 12:00"));
         billList.add(new Bill("HD003", "Nhà sách KMA", "56000", "01/01/2025 - 12: 00"));

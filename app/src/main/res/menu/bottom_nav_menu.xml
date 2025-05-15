@@ -16,5 +16,9 @@
         android:icon="@drawable/ic_bill"
         android:title="Hóa đơn" />
 
+    <item
+        android:id="@+id/navThongke"
+        android:icon="@drawable/chart"
+        android:title="Thống kê" />
 
 </menu>

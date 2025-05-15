@@ -30,7 +30,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Đã đăng nhập → load giao diện
+        // Tạo dữ liệu mẫu trong DB
+        new DBHelper(this).createSampleData();
+
+        // Load giao diện
         setContentView(R.layout.activity_main);
 
         viewPager = findViewById(R.id.viewPager);
@@ -41,13 +44,23 @@ public class MainActivity extends AppCompatActivity {
 
         // Chuyển fragment theo bottom nav
         bottomNav.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.navHoaDon) {
-                    viewPager.setCurrentItem(0);
-                    return true;
+            if (item.getItemId() == R.id.navNhaSach) {
+                viewPager.setCurrentItem(0);
+                return true;
+            } else if (item.getItemId() == R.id.navSach) {
+                viewPager.setCurrentItem(1);
+                return true;
             }
-            return false;
+            else if (item.getItemId() == R.id.navHoaDon) {
+                viewPager.setCurrentItem(2);
+                return true;
+            }
+            else {
+                viewPager.setCurrentItem(3);
+                return true;
+            }
         });
 
-        bottomNav.setSelectedItemId(R.id.navHoaDon);
+        bottomNav.setSelectedItemId(R.id.navNhaSach);
     }
 }

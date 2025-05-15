@@ -14,6 +14,15 @@
         tools:targetApi="31">
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.SignUpActivity" />
+        <activity android:name=".activity.BookFormActivity" />
+        <activity android:name=".activity.CreateBillActivity"
+            android:label="Lập hóa đơn"/>
+        <activity android:name=".activity.SuaNhaSachActivity" />
+        <activity android:name=".activity.ThemNhaSachActivity" />
+        <activity android:name=".activity.DoanhThuSachActivity"
+            android:label="Thống kê nhà sách"/>
+        <activity android:name=".activity.DoanhThuNhaSachActivity" />
+
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">
