@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.nhom11.qlnhasach.R;
+import com.nhom11.qlnhasach.activity.DBHelper;
 import com.nhom11.qlnhasach.activity.SuaNhaSachActivity;
 import com.nhom11.qlnhasach.activity.ThemNhaSachActivity;
 import com.nhom11.qlnhasach.adapter.NhaSachAdapter;
@@ -52,9 +53,9 @@ public class NhaSachFragment extends Fragment implements NhaSachAdapter.OnItemCl
         recyclerViewNhaSach = view.findViewById(R.id.recyclerViewNhaSach);
         recyclerViewNhaSach.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        nhaSachList = new ArrayList<>();
-        nhaSachList.add(new NhaSach("MS001", "Nhà Sách Phương Nam", "123 Nguyễn Du", null));
-        nhaSachList.add(new NhaSach("MS002", "Nhà Sách Cá Chép", "456 Trần Hưng Đạo", null));
+        nhaSachList =  new DBHelper(requireContext()).getAllBookstores();
+//        nhaSachList.add(new NhaSach("MS001", "Nhà Sách Phương Nam", "123 Nguyễn Du", null));
+//        nhaSachList.add(new NhaSach("MS002", "Nhà Sách Cá Chép", "456 Trần Hưng Đạo", null));
 
         adapter = new NhaSachAdapter(getContext(), nhaSachList);
         adapter.setOnItemClickListener(this);

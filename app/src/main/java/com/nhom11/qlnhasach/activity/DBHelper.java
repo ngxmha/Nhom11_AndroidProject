@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.nhom11.qlnhasach.model.Book;
 import com.nhom11.qlnhasach.model.NhaSach;
 
 import java.util.ArrayList;
@@ -35,8 +36,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // Bảng Bookstores
         String CREATE_BOOKSTORE_TABLE = "CREATE TABLE " + TABLE_BOOKSTORES + " (" +
-                "maNhasach TEXT PRIMARY KEY, " +
-                "tenNhasach TEXT, " +
+                "maNhaSach TEXT PRIMARY KEY, " +
+                "tenNhaSach TEXT, " +
                 "diaChi TEXT, " +
                 "iconUri TEXT)";
         db.execSQL(CREATE_BOOKSTORE_TABLE);
@@ -253,5 +254,35 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return nhaSachList;
+    }
+
+    //====================== Sách =====================
+    public List<Book> getAllBooks() {
+        List<Book> bookList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(DBHelper.TABLE_BOOKS, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int maSachIndex = cursor.getColumnIndex("maSach");
+                int tenSachIndex = cursor.getColumnIndex("tenSach");
+                int tacGiaIndex = cursor.getColumnIndex("tacGia");
+                int giaIndex = cursor.getColumnIndex("gia");
+
+                if (maSachIndex != -1 && tenSachIndex != -1 && tacGiaIndex != -1 && giaIndex != -1) {
+                    String maSach = cursor.getString(maSachIndex);
+                    String tenSach = cursor.getString(tenSachIndex);
+                    String tacGia = cursor.getString(tacGiaIndex);
+                    double gia = cursor.getDouble(giaIndex);
+
+                    Book book = new Book(maSach, tenSach, tacGia, gia);
+                    bookList.add(book);
+                }
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return bookList;
     }
 }

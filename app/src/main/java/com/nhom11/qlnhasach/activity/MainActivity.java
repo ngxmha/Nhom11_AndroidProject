@@ -30,8 +30,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Đã đăng nhập → load giao diện
+        // Tạo dữ liệu mẫu trong DB
         new DBHelper(this).createSampleData();
+
+        // Load giao diện
         setContentView(R.layout.activity_main);
 
         viewPager = findViewById(R.id.viewPager);
