@@ -2,7 +2,9 @@ package com.nhom11.qlnhasach.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -27,6 +29,7 @@ public class BillFragment extends Fragment {
     private BillAdapter adapter;
     private List<Bill> billList;
     private FloatingActionButton fab;
+    private int selectedItem = -1;
 
     @Nullable
     @Override
@@ -45,6 +48,21 @@ public class BillFragment extends Fragment {
 //        Fake data để test
 //        loadBillData();
 
+        // Đăng ký menu context cho recyclerBill
+//        registerForContextMenu(recyclerBill);
+
+        recyclerBill.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+            @Override
+            public void onChildViewAttachedToWindow(@NonNull View view) {
+                registerForContextMenu(view);
+            }
+
+            @Override
+            public void onChildViewDetachedFromWindow(@NonNull View view) {
+                unregisterForContextMenu(view);
+            }
+        });
+
         // Xử lí nút FAB
         fab.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), CreateBillActivity.class);
@@ -61,6 +79,26 @@ public class BillFragment extends Fragment {
 
         billList.addAll(new DBHelper(requireContext()).getAllBills());
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.context_menu, menu);
+        selectedItem = recyclerBill.getChildAdapterPosition(v);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.action_delete && selectedItem != -1){
+            Bill bill = billList.get(selectedItem);
+            new DBHelper(requireContext()).deleteBill(bill.getSoHD());
+            billList.remove(selectedItem);
+            adapter.notifyItemRemoved(selectedItem);
+            selectedItem = -1;
+            return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     @Override

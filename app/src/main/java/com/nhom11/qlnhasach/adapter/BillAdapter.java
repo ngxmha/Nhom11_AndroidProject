@@ -48,6 +48,7 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.BillViewHolder
         NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
         holder.tvTotalMoney.setText(formatter.format(bill.getTotalMoney()) + " VNĐ");
         holder.tvNgayHD.setText(bill.getNgayHD());
+        holder.itemView.setLongClickable(true);
     }
 
     @Override

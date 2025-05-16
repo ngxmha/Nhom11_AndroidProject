@@ -370,4 +370,12 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
         return id;
     }
+
+    public boolean deleteBill(String soHD){
+        SQLiteDatabase db = getWritableDatabase();
+        int rows = db.delete(TABLE_INVOICES, "soHD=?", new String[]{soHD});
+        db.close();
+        return rows > 0;
+    }
+
 }
