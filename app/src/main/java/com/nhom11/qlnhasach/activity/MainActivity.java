@@ -30,7 +30,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Đã đăng nhập → load giao diện
+        // Tạo dữ liệu mẫu trong DB
+        new DBHelper(this).createSampleData();
+
+        // Load giao diện
         setContentView(R.layout.activity_main);
 
         viewPager = findViewById(R.id.viewPager);
@@ -48,8 +51,12 @@ public class MainActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(1);
                 return true;
             }
-            else {
+            else if (item.getItemId() == R.id.navHoaDon) {
                 viewPager.setCurrentItem(2);
+                return true;
+            }
+            else {
+                viewPager.setCurrentItem(3);
                 return true;
             }
         });

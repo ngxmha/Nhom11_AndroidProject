@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.nhom11.qlnhasach.activity.BookFormActivity;
 import com.nhom11.qlnhasach.R;
+import com.nhom11.qlnhasach.activity.DBHelper;
 import com.nhom11.qlnhasach.adapter.BookAdapter;
 import com.nhom11.qlnhasach.model.Book;
 
@@ -46,7 +47,9 @@ public class BookFragment extends Fragment {
         btnClear = view.findViewById(R.id.btnClear);
         fab = view.findViewById(R.id.fab); // ánh xạ lại fab
 
-        loadDummyData();
+//        loadDummyData();
+        bookList = new DBHelper(requireContext()).getAllBooks();
+
         filteredList.addAll(bookList);
         adapter = new BookAdapter(requireContext(), filteredList);
         recyclerBook.setAdapter(adapter);

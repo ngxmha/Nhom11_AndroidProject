@@ -3,6 +3,7 @@ package com.nhom11.qlnhasach.activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -10,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -41,6 +43,8 @@ public class CreateBillActivity extends AppCompatActivity {
         // Gán layout create_bill.xml
         setContentView(R.layout.create_bill);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         // Khởi tạo các view
         recyclerBook = findViewById(R.id.recyclerBook);
         edSearch = findViewById(R.id.edSearch);
@@ -57,6 +61,9 @@ public class CreateBillActivity extends AppCompatActivity {
         recyclerBook.setLayoutManager(new LinearLayoutManager(this));
         adapter = new BookBillAdapter(this, filteredBookList);
         recyclerBook.setAdapter(adapter);
+
+        //Tổng tiền ban đầu
+        calculateTotal();
 
         // Tải dữ liệu
         loadBookData();
@@ -171,5 +178,13 @@ public class CreateBillActivity extends AppCompatActivity {
                 this, android.R.layout.simple_spinner_item, bookstores);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerNS.setAdapter(spinnerAdapter);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
