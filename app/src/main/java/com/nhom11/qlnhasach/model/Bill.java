@@ -2,13 +2,22 @@ package com.nhom11.qlnhasach.model;
 
 public class Bill {
     private String soHD;
-    private String tenNS;
-    private String totalMoney;
+    private String idNS;
+    private double totalMoney;
     private String ngayHD;
 
-    public Bill(String soHD, String tenNS, String totalMoney, String ngayHD) {
+    private static int nextInvoiceNumber = 4;
+
+    public Bill(String idNS, double totalMoney, String ngayHD) {
+        this.soHD = String.format("HD%03d", nextInvoiceNumber++);
+        this.idNS = idNS;
+        this.totalMoney = totalMoney;
+        this.ngayHD = ngayHD;
+    }
+
+    public Bill(String soHD, String idNS, double totalMoney, String ngayHD) {
         this.soHD = soHD;
-        this.tenNS = tenNS;
+        this.idNS = idNS;
         this.totalMoney = totalMoney;
         this.ngayHD = ngayHD;
     }
@@ -17,28 +26,28 @@ public class Bill {
         return soHD;
     }
 
-    public String getTenNS() {
-        return tenNS;
-    }
-
-    public String getTotalMoney() {
-        return totalMoney;
-    }
-
-    public String getNgayHD() {
-        return ngayHD;
-    }
-
     public void setSoHD(String soHD) {
         this.soHD = soHD;
     }
 
-    public void setTenNS(String tenNS) {
-        this.tenNS = tenNS;
+    public String getIdNS() {
+        return idNS;
     }
 
-    public void setTotalMoney(String totalMoney) {
+    public void setIdNS(String idNS) {
+        this.idNS = idNS;
+    }
+
+    public double getTotalMoney() {
+        return totalMoney;
+    }
+
+    public void setTotalMoney(double totalMoney) {
         this.totalMoney = totalMoney;
+    }
+
+    public String getNgayHD() {
+        return ngayHD;
     }
 
     public void setNgayHD(String ngayHD) {

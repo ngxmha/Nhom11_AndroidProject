@@ -19,10 +19,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.nhom11.qlnhasach.R;
 import com.nhom11.qlnhasach.adapter.BookBillAdapter;
+import com.nhom11.qlnhasach.model.Bill;
 import com.nhom11.qlnhasach.model.Book;
+import com.nhom11.qlnhasach.model.NhaSach;
 
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,15 +59,16 @@ public class CreateBillActivity extends AppCompatActivity {
 
         // Khởi tạo dữ liệu
         bookList = new ArrayList<>();
+
+        // Lấy dữ liệu từ DB
+        bookList = new DBHelper(this).getAllBooks();
+
         filteredBookList = new ArrayList<>();
 
         // Thiết lập RecyclerView
         recyclerBook.setLayoutManager(new LinearLayoutManager(this));
         adapter = new BookBillAdapter(this, filteredBookList);
         recyclerBook.setAdapter(adapter);
-
-        //Tổng tiền ban đầu
-        calculateTotal();
 
         // Tải dữ liệu
         loadBookData();
@@ -86,6 +91,28 @@ public class CreateBillActivity extends AppCompatActivity {
         btnCreateBill.setOnClickListener(v -> {
             if (isAnyBookSelected()) {
                 // TODO: Thực hiện tạo hóa đơn
+
+                // Lấy thông tin mã nhà sách để lưu vào DB
+                String idNS = "";
+                String tenNS = spinnerNS.getSelectedItem().toString();
+                for(NhaSach ns : new DBHelper(this).getAllBookstores()){
+                    if(ns.getTenNhaSach().equals(tenNS)){
+                        idNS = ns.getMaNhaSach();
+                        break;
+                    }
+                }
+
+                // Lấy tổng tiền hóa đơn
+                double totalMoney = adapter.getTotalAmount();
+
+                // Lấy thời điểm lập hóa đơn
+                Date currentTime = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault());
+                String formattedTime = sdf.format(currentTime);
+
+                // Thêm hóa đơn vào DB
+                new DBHelper(this).addBill(new Bill(idNS, totalMoney, formattedTime));
+
                 Toast.makeText(this, "Đã tạo hóa đơn thành công", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
@@ -126,7 +153,6 @@ public class CreateBillActivity extends AppCompatActivity {
                 }
             }
         }
-
         adapter.notifyDataSetChanged();
     }
 
@@ -147,19 +173,19 @@ public class CreateBillActivity extends AppCompatActivity {
 
         // Hiển thị tổng tiền
         NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
-        tvTotalMoney.setText(formatter.format(total) + " đ");
+        tvTotalMoney.setText(formatter.format(total) + " VNĐ");
     }
 
     private void loadBookData() {
         // Thêm dữ liệu mẫu (có thể thay thế bằng việc lấy từ cơ sở dữ liệu)
-        bookList.add(new Book("B001", "Đắc Nhân Tâm", "Dale Carnegie", 150000));
-        bookList.add(new Book("B002", "Nhà Giả Kim", "Paulo Coelho", 120000));
-        bookList.add(new Book("B003", "Cây Cam Ngọt Của Tôi", "José Mauro de Vasconcelos", 85000));
-        bookList.add(new Book("B004", "Tôi Tài Giỏi, Bạn Cũng Thế", "Adam Khoo", 110000));
-        bookList.add(new Book("B005", "Tuổi Trẻ Đáng Giá Bao Nhiêu", "Rosie Nguyễn", 75000));
-        bookList.add(new Book("B006", "Người Giàu Có Nhất Thành Babylon", "George S. Clason", 65000));
-        bookList.add(new Book("B007", "Mặc Kệ Thiên Hạ, Sống Như Người Nhật", "Mari Tamagawa", 60000));
-        bookList.add(new Book("B008", "Hành Trình Về Phương Đông", "Baird T. Spalding", 80000));
+//        bookList.add(new Book("B001", "Đắc Nhân Tâm", "Dale Carnegie", 150000));
+//        bookList.add(new Book("B002", "Nhà Giả Kim", "Paulo Coelho", 120000));
+//        bookList.add(new Book("B003", "Cây Cam Ngọt Của Tôi", "José Mauro de Vasconcelos", 85000));
+//        bookList.add(new Book("B004", "Tôi Tài Giỏi, Bạn Cũng Thế", "Adam Khoo", 110000));
+//        bookList.add(new Book("B005", "Tuổi Trẻ Đáng Giá Bao Nhiêu", "Rosie Nguyễn", 75000));
+//        bookList.add(new Book("B006", "Người Giàu Có Nhất Thành Babylon", "George S. Clason", 65000));
+//        bookList.add(new Book("B007", "Mặc Kệ Thiên Hạ, Sống Như Người Nhật", "Mari Tamagawa", 60000));
+//        bookList.add(new Book("B008", "Hành Trình Về Phương Đông", "Baird T. Spalding", 80000));
 
         // Khởi tạo danh sách lọc với tất cả sách
         filteredBookList.addAll(bookList);
@@ -167,15 +193,21 @@ public class CreateBillActivity extends AppCompatActivity {
     }
 
     private void setupBookstoreSpinner() {
-        // Danh sách nhà sách (có thể lấy từ cơ sở dữ liệu)
-        List<String> bookstores = new ArrayList<>();
-        bookstores.add("Nhà sách Phương Nam");
-        bookstores.add("Nhà sách Fahasa");
-        bookstores.add("Nhà sách Kim Đồng");
+        // Danh sách nhà sách lấy từ cơ sở dữ liệu
+        List<NhaSach> bookstores = new ArrayList<>();
+        bookstores = new DBHelper(this).getAllBookstores();
+
+        List<String> nameList = new ArrayList<>();
+        for (NhaSach ns : bookstores) {
+            nameList.add(ns.getTenNhaSach());
+        }
+//        bookstores.add("Nhà sách Phương Nam");
+//        bookstores.add("Nhà sách Fahasa");
+//        bookstores.add("Nhà sách Kim Đồng");
 
         // Thiết lập adapter cho Spinner
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, bookstores);
+                this, android.R.layout.simple_spinner_item, nameList);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerNS.setAdapter(spinnerAdapter);
     }

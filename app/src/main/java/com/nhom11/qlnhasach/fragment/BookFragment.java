@@ -48,7 +48,6 @@ public class BookFragment extends Fragment {
         fab = view.findViewById(R.id.fab); // ánh xạ lại fab
 
 //        loadDummyData();
-        bookList = new DBHelper(requireContext()).getAllBooks();
 
         filteredList.addAll(bookList);
         adapter = new BookAdapter(requireContext(), filteredList);

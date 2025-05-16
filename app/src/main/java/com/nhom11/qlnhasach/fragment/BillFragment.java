@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.nhom11.qlnhasach.R;
 import com.nhom11.qlnhasach.activity.CreateBillActivity;
+import com.nhom11.qlnhasach.activity.DBHelper;
 import com.nhom11.qlnhasach.adapter.BillAdapter;
 import com.nhom11.qlnhasach.model.Bill;
 
@@ -36,13 +37,13 @@ public class BillFragment extends Fragment {
         fab = view.findViewById(R.id.fab);
 
         billList = new ArrayList<>();
-        adapter = new BillAdapter(billList);
+        adapter = new BillAdapter(requireContext(), billList);
 
         recyclerBill.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerBill.setAdapter(adapter);
 
 //        Fake data để test
-        loadBillData();
+//        loadBillData();
 
         // Xử lí nút FAB
         fab.setOnClickListener(v -> {
@@ -53,9 +54,19 @@ public class BillFragment extends Fragment {
     }
 
     private void loadBillData() {
-        billList.add(new Bill("HD001", "Nhà sách PTIT", "123000", "01/01/2025 - 12:00"));
-        billList.add(new Bill("HD002", "Nhà sách HUST", "150000", "01/01/2025 - 12:00"));
-        billList.add(new Bill("HD003", "Nhà sách KMA", "56000", "01/01/2025 - 12: 00"));
+//        billList.add(new Bill("Nhà sách PTIT", 123000, "01/01/2025 - 12:00"));
+//        billList.add(new Bill("Nhà sách HUST", 150000, "01/01/2025 - 12:00"));
+//        billList.add(new Bill( "Nhà sách VNU", 56000, "01/01/2025 - 12:00"));
+//        billList.add(new Bill( "Nhà sách KMA", 56000, "01/01/2025 - 12:00"));
+
+        billList.addAll(new DBHelper(requireContext()).getAllBills());
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        billList.clear();
+        loadBillData();
     }
 }
