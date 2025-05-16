@@ -1,0 +1,178 @@
+package com.nhom11.qlnhasach.activity;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.content.ContentValues;
+import android.database.Cursor;
+
+public class DBHelper extends SQLiteOpenHelper {
+    private static final String DATABASE_NAME = "BookShopManagementSystem.db";
+    private static final int DATABASE_VERSION = 1;
+
+    // Tên các bảng
+    public static final String TABLE_USERS = "Users";
+    public static final String TABLE_NHA_SACH = "NhaSach";
+    public static final String TABLE_BOOK = "Book";
+    public static final String TABLE_BILL = "Bill";
+    public static final String TABLE_BILL_DETAIL = "BillDetail";
+
+    public DBHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        // Bảng người dùng
+        String CREATE_USER_TABLE = "CREATE TABLE " + TABLE_USERS + " (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "full_name TEXT, " +
+                "email TEXT UNIQUE, " +
+                "password TEXT)";
+
+        // Bảng nhà sách
+        String CREATE_NHASACH_TABLE = "CREATE TABLE " + TABLE_NHA_SACH + " (" +
+                "maNhaSach TEXT PRIMARY KEY, " +
+                "tenNhaSach TEXT NOT NULL, " +
+                "diaChi TEXT, " +
+                "iconUri TEXT)";
+
+        // Bảng sách
+        String CREATE_BOOK_TABLE = "CREATE TABLE " + TABLE_BOOK + " (" +
+                "maSach TEXT PRIMARY KEY, " +
+                "tenSach TEXT NOT NULL, " +
+                "tacGia TEXT, " +
+                "gia REAL, " +
+                "maNhaSach TEXT, " +
+                "FOREIGN KEY (maNhaSach) REFERENCES " + TABLE_NHA_SACH + "(maNhaSach) ON DELETE CASCADE)";
+
+        // Bảng hóa đơn
+        String CREATE_BILL_TABLE = "CREATE TABLE " + TABLE_BILL + " (" +
+                "soHD TEXT PRIMARY KEY, " +
+                "maNhaSach TEXT, " +
+                "ngayHD TEXT, " +
+                "totalMoney REAL, " +
+                "FOREIGN KEY (maNhaSach) REFERENCES " + TABLE_NHA_SACH + "(maNhaSach) ON DELETE CASCADE)";
+
+        // Bảng chi tiết hóa đơn
+        String CREATE_BILL_DETAIL_TABLE = "CREATE TABLE " + TABLE_BILL_DETAIL + " (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "soHD TEXT, " +
+                "maSach TEXT, " +
+                "soLuong INTEGER, " +
+                "donGia REAL, " +
+                "FOREIGN KEY (soHD) REFERENCES " + TABLE_BILL + "(soHD) ON DELETE CASCADE, " +
+                "FOREIGN KEY (maSach) REFERENCES " + TABLE_BOOK + "(maSach) ON DELETE CASCADE)";
+
+        // Thực thi các câu lệnh tạo bảng
+        db.execSQL(CREATE_USER_TABLE);
+        db.execSQL(CREATE_NHASACH_TABLE);
+        db.execSQL(CREATE_BOOK_TABLE);
+        db.execSQL(CREATE_BILL_TABLE);
+        db.execSQL(CREATE_BILL_DETAIL_TABLE);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Xóa các bảng cũ nếu tồn tại
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BILL_DETAIL);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BILL);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOK);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NHA_SACH);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+
+        // Tạo lại các bảng
+        onCreate(db);
+    }
+
+    // Xóa tất cả dữ liệu trong cơ sở dữ liệu
+    public void clearDatabase(SQLiteDatabase db) {
+        db.execSQL("DELETE FROM " + TABLE_BILL_DETAIL);
+        db.execSQL("DELETE FROM " + TABLE_BILL);
+        db.execSQL("DELETE FROM " + TABLE_BOOK);
+        db.execSQL("DELETE FROM " + TABLE_NHA_SACH);
+        db.execSQL("DELETE FROM " + TABLE_USERS);
+    }
+
+    // User DAO methods
+    public long addUser(String fullName, String email, String password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("full_name", fullName);
+        values.put("email", email);
+        values.put("password", password);
+        return db.insert(TABLE_USERS, null, values);
+    }
+
+    public boolean checkUser(String email, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {"id"};
+        String selection = "email = ? AND password = ?";
+        String[] selectionArgs = {email, password};
+        Cursor cursor = db.query(TABLE_USERS, columns, selection, selectionArgs, null, null, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count > 0;
+    }
+
+    // Book DAO methods
+    public long addBook(String maSach, String tenSach, String tacGia, double gia, String maNhaSach) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("maSach", maSach);
+        values.put("tenSach", tenSach);
+        values.put("tacGia", tacGia);
+        values.put("gia", gia);
+        values.put("maNhaSach", maNhaSach);
+        return db.insert(TABLE_BOOK, null, values);
+    }
+
+    public Cursor getAllBooks() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query(TABLE_BOOK, null, null, null, null, null, null);
+    }
+
+    // Bookstore (NhaSach) DAO methods
+    public long addBookstore(String maNhaSach, String tenNhaSach, String diaChi, String iconUri) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("maNhaSach", maNhaSach);
+        values.put("tenNhaSach", tenNhaSach);
+        values.put("diaChi", diaChi);
+        values.put("iconUri", iconUri);
+        return db.insert(TABLE_NHA_SACH, null, values);
+    }
+
+    public Cursor getAllBookstores() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query(TABLE_NHA_SACH, null, null, null, null, null, null);
+    }
+
+    // Bill DAO methods
+    public long addBill(String soHD, String maNhaSach, String ngayHD, double totalMoney) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("soHD", soHD);
+        values.put("maNhaSach", maNhaSach);
+        values.put("ngayHD", ngayHD);
+        values.put("totalMoney", totalMoney);
+        return db.insert(TABLE_BILL, null, values);
+    }
+
+    // Bill Detail DAO methods
+    public long addBillDetail(String soHD, String maSach, int soLuong, double donGia) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("soHD", soHD);
+        values.put("maSach", maSach);
+        values.put("soLuong", soLuong);
+        values.put("donGia", donGia);
+        return db.insert(TABLE_BILL_DETAIL, null, values);
+    }
+
+    public Cursor getBillDetails(String billId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selection = "soHD = ?";
+        String[] selectionArgs = {billId};
+        return db.query(TABLE_BILL_DETAIL, null, selection, selectionArgs, null, null, null);
+    }
+}
