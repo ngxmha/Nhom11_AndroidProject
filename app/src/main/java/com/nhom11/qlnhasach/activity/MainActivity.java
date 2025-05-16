@@ -10,14 +10,27 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.nhom11.qlnhasach.R;
 import com.nhom11.qlnhasach.adapter.ViewPagerAdapter;
+import com.nhom11.qlnhasach.model.DatabaseManager;
+import com.nhom11.qlnhasach.activity.DBHelper;
 
 public class MainActivity extends AppCompatActivity {
     private ViewPager2 viewPager;
     private BottomNavigationView bottomNav;
     private ViewPagerAdapter viewPagerAdapter;
+
+    // Thêm DatabaseManager để quản lý dữ liệu
+    public static DatabaseManager databaseManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Khởi tạo DatabaseManager
+        databaseManager = new DatabaseManager(this);
+
+        // Tạo dữ liệu mẫu trong database khi chạy ứng dụng lần đầu
+        DBHelper dbHelper = new DBHelper(this);
+        dbHelper.createSampleData();
 
         // Kiểm tra trạng thái đăng nhập
         SharedPreferences sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE);

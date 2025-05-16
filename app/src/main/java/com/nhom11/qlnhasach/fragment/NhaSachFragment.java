@@ -101,26 +101,28 @@ public class NhaSachFragment extends Fragment implements NhaSachAdapter.OnItemCl
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        loadNhaSachFromDatabase();
+    }
+
+    private void loadNhaSachFromDatabase() {
+        nhaSachList.clear();
+        List<NhaSach> nhaSachFromDB = MainActivity.databaseManager.getAllNhaSach();
+        nhaSachList.addAll(nhaSachFromDB);
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && data != null) {
             if (requestCode == REQUEST_ADD_NHASACH) {
-                NhaSach nhaSachMoi = (NhaSach) data.getSerializableExtra("nhaSachMoi");
-                if (nhaSachMoi != null) {
-                    nhaSachList.add(nhaSachMoi);
-                    adapter.notifyDataSetChanged();
-                }
+                loadNhaSachFromDatabase();
             } else if (requestCode == REQUEST_EDIT_NHASACH) {
-                NhaSach nhaSachDaSua = (NhaSach) data.getSerializableExtra("nhaSachDaSua");
-                if (nhaSachDaSua != null) {
-                    for (int i = 0; i < nhaSachList.size(); i++) {
-                        if (nhaSachList.get(i).getMaNhaSach().equals(nhaSachDaSua.getMaNhaSach())) {
-                            nhaSachList.set(i, nhaSachDaSua);
-                            adapter.notifyItemChanged(i);
-                            break;
-                        }
-                    }
-                }
+                loadNhaSachFromDatabase();
             }
         }
     }

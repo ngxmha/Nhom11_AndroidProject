@@ -21,6 +21,7 @@ import com.nhom11.qlnhasach.activity.BookFormActivity;
 import com.nhom11.qlnhasach.R;
 import com.nhom11.qlnhasach.activity.DBHelper;
 import com.nhom11.qlnhasach.adapter.BookAdapter;
+import com.nhom11.qlnhasach.activity.MainActivity;
 import com.nhom11.qlnhasach.model.Book;
 
 import java.util.ArrayList;
@@ -83,6 +84,19 @@ public class BookFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Cập nhật dữ liệu từ cơ sở dữ liệu
+        loadBooksFromDatabase();
+
+        // Kiểm tra xem có sách mới được thêm vào từ BookFormActivity không
+        if (!BookFormActivity.bookList.isEmpty()) {
+            BookFormActivity.bookList.clear();  // Đã được lưu trong DB và tải lại ở trên
+        }
+    }
+
     private void filterBooks(String query) {
         filteredList.clear();
         if (query.isEmpty()) {
@@ -97,11 +111,19 @@ public class BookFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    private void loadDummyData() {
-        bookList.add(new Book("B001", "Lập trình Android", "Nguyễn Văn A", 85000));
-        bookList.add(new Book("B002", "Cấu trúc dữ liệu", "Trần Thị B", 95000));
-        bookList.add(new Book("B003", "Lập trình Python", "Nguyễn Văn C", 95000));
-        bookList.add(new Book("B004", "Cấu trúc dữ liệu nâng cao", "Trần Thị D", 100000));
-        bookList.add(new Book("B005", "Lập trình Java", "Lê Thị E", 80000));
+    private void loadBooksFromDatabase() {
+        // Xóa dữ liệu cũ
+        bookList.clear();
+        filteredList.clear();
+
+        // Lấy dữ liệu mới từ database
+        List<Book> booksFromDB = MainActivity.databaseManager.getAllBooks();
+        bookList.addAll(booksFromDB);
+        filteredList.addAll(bookList);
+
+        // Cập nhật adapter
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 }

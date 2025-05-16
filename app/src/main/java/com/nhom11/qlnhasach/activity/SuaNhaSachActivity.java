@@ -88,8 +88,15 @@ public class SuaNhaSachActivity extends AppCompatActivity {
                         nhaSachCanSua.setDiaChi(diaChiMoi);
                         nhaSachCanSua.setIconUri(iconUriMoi);
 
+                        boolean updated = MainActivity.databaseManager.updateNhaSach(nhaSachCanSua);
+                        if (updated) {
+                            Toast.makeText(SuaNhaSachActivity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(SuaNhaSachActivity.this, "Lỗi khi cập nhật", Toast.LENGTH_SHORT).show();
+                        }
+
                         Intent resultIntent = new Intent();
-                        resultIntent.putExtra("nhaSachDaSua", nhaSachCanSua); // Truyền đối tượng đã sửa
+                        resultIntent.putExtra("nhaSachDaSua", nhaSachCanSua);
                         setResult(RESULT_OK, resultIntent);
                         finish();
                     } else {

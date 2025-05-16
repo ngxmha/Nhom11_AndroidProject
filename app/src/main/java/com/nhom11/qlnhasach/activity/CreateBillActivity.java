@@ -19,10 +19,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.nhom11.qlnhasach.R;
 import com.nhom11.qlnhasach.adapter.BookBillAdapter;
+import com.nhom11.qlnhasach.model.Bill;
 import com.nhom11.qlnhasach.model.Book;
+import com.nhom11.qlnhasach.model.NhaSach;
 
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,6 +40,9 @@ public class CreateBillActivity extends AppCompatActivity {
     private ImageView btnClear;
     private TextView tvTotalMoney;
     private Spinner spinnerNS;
+
+    // Biến static để lưu hóa đơn mới tạo
+    public static List<Bill> newBillList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +92,61 @@ public class CreateBillActivity extends AppCompatActivity {
         // Xử lý nút Lập hóa đơn
         btnCreateBill.setOnClickListener(v -> {
             if (isAnyBookSelected()) {
-                // TODO: Thực hiện tạo hóa đơn
-                Toast.makeText(this, "Đã tạo hóa đơn thành công", Toast.LENGTH_SHORT).show();
+                // Tạo mã hóa đơn
+                String soHD = "HD" + System.currentTimeMillis();
+
+                // Lấy nhà sách được chọn
+                String tenNhaSach = spinnerNS.getSelectedItem().toString();
+
+                // Lấy tổng tiền
+                double total = adapter.getTotalAmount();
+                NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
+                String totalMoney = formatter.format(total);
+
+                // Lấy thời gian hiện tại
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault());
+                String ngayHD = sdf.format(new Date());
+
+                // Tạo đối tượng Bill mới
+                Bill newBill = new Bill(soHD, tenNhaSach, totalMoney, ngayHD);
+
+                // Tìm mã nhà sách từ tên
+                String maNhaSach = null;
+                List<NhaSach> nhaSachList = MainActivity.databaseManager.getAllNhaSach();
+                for (NhaSach ns : nhaSachList) {
+                    if (ns.getTenNhaSach().equals(tenNhaSach)) {
+                        maNhaSach = ns.getMaNhaSach();
+                        break;
+                    }
+                }
+
+                if (maNhaSach != null) {
+                    // Lưu hóa đơn vào cơ sở dữ liệu
+                    long result = MainActivity.databaseManager.addBill(newBill);
+
+                    if (result > 0) {
+                        // Lưu chi tiết hóa đơn
+                        for (int i = 0; i < filteredBookList.size(); i++) {
+                            Book book = filteredBookList.get(i);
+                            int quantity = adapter.getQuantity(book.getMaSach());
+
+                            if (quantity > 0) {
+                                // Thêm chi tiết hóa đơn
+                                MainActivity.databaseManager.addBillDetail(soHD, book.getMaSach(), quantity, book.getGia());
+                            }
+                        }
+
+                        Toast.makeText(this, "Đã tạo hóa đơn thành công", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Lỗi khi tạo hóa đơn", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(this, "Không tìm thấy mã nhà sách", Toast.LENGTH_SHORT).show();
+                }
+
+                // Thêm vào danh sách static
+                newBillList.add(newBill);
+
                 finish();
             } else {
                 Toast.makeText(this, "Vui lòng chọn ít nhất một cuốn sách", Toast.LENGTH_SHORT).show();

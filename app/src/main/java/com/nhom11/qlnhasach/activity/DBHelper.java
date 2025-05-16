@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.content.ContentValues;
+import android.database.Cursor;
 
 import com.nhom11.qlnhasach.model.Book;
 import com.nhom11.qlnhasach.model.NhaSach;
@@ -32,6 +34,42 @@ public class DBHelper extends SQLiteOpenHelper {
                 "full_name TEXT, " +
                 "email TEXT UNIQUE, " +
                 "password TEXT)";
+
+        // Bảng nhà sách
+        String CREATE_NHASACH_TABLE = "CREATE TABLE " + TABLE_NHA_SACH + " (" +
+                "maNhaSach TEXT PRIMARY KEY, " +
+                "tenNhaSach TEXT NOT NULL, " +
+                "diaChi TEXT, " +
+                "iconUri TEXT)";
+
+        // Bảng sách
+        String CREATE_BOOK_TABLE = "CREATE TABLE " + TABLE_BOOK + " (" +
+                "maSach TEXT PRIMARY KEY, " +
+                "tenSach TEXT NOT NULL, " +
+                "tacGia TEXT, " +
+                "gia REAL, " +
+                "maNhaSach TEXT, " +
+                "FOREIGN KEY (maNhaSach) REFERENCES " + TABLE_NHA_SACH + "(maNhaSach) ON DELETE CASCADE)";
+
+        // Bảng hóa đơn
+        String CREATE_BILL_TABLE = "CREATE TABLE " + TABLE_BILL + " (" +
+                "soHD TEXT PRIMARY KEY, " +
+                "maNhaSach TEXT, " +
+                "ngayHD TEXT, " +
+                "totalMoney REAL, " +
+                "FOREIGN KEY (maNhaSach) REFERENCES " + TABLE_NHA_SACH + "(maNhaSach) ON DELETE CASCADE)";
+
+        // Bảng chi tiết hóa đơn
+        String CREATE_BILL_DETAIL_TABLE = "CREATE TABLE " + TABLE_BILL_DETAIL + " (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "soHD TEXT, " +
+                "maSach TEXT, " +
+                "soLuong INTEGER, " +
+                "donGia REAL, " +
+                "FOREIGN KEY (soHD) REFERENCES " + TABLE_BILL + "(soHD) ON DELETE CASCADE, " +
+                "FOREIGN KEY (maSach) REFERENCES " + TABLE_BOOK + "(maSach) ON DELETE CASCADE)";
+
+        // Thực thi các câu lệnh tạo bảng
         db.execSQL(CREATE_USER_TABLE);
 
         // Bảng Bookstores

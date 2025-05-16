@@ -71,6 +71,12 @@ public class ThemNhaSachActivity extends AppCompatActivity {
 
                 if (!maNhaSach.isEmpty() && !tenNhaSach.isEmpty() && !diaChi.isEmpty()) {
                     NhaSach nhaSachMoi = new NhaSach(maNhaSach, tenNhaSach, diaChi, iconUriString);
+                    long result = MainActivity.databaseManager.addNhaSach(nhaSachMoi);
+                    if (result > 0) {
+                        Toast.makeText(ThemNhaSachActivity.this, "Thêm nhà sách thành công", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ThemNhaSachActivity.this, "Lỗi khi thêm nhà sách", Toast.LENGTH_SHORT).show();
+                    }
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("nhaSachMoi", nhaSachMoi); // Truyền đối tượng NhaSach
                     setResult(RESULT_OK, resultIntent); // Thiết lập kết quả OK
