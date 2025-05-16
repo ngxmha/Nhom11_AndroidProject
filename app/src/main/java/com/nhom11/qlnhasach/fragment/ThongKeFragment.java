@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 
 import com.nhom11.qlnhasach.R;
 import com.nhom11.qlnhasach.activity.DoanhThuNhaSachActivity;
-import com.nhom11.qlnhasach.activity.DoanhThuSachActivity;
 
 
 public class ThongKeFragment extends Fragment {
@@ -32,12 +31,6 @@ public class ThongKeFragment extends Fragment {
         // Nút "Thống kê theo Nhà Sách"
         view.findViewById(R.id.btnTheoNhaSach).setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), DoanhThuNhaSachActivity.class);
-            startActivity(intent);
-        });
-
-        // Nút "Thống kê theo Sách"
-        view.findViewById(R.id.btnTheoSach).setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), DoanhThuSachActivity.class);
             startActivity(intent);
         });
 

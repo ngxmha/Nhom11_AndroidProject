@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
@@ -25,6 +24,7 @@ import com.nhom11.qlnhasach.R;
 import com.nhom11.qlnhasach.activity.DBHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -54,13 +54,13 @@ public class DoanhThuNhaSachActivity extends AppCompatActivity {
         btnPrevYear.setOnClickListener(v -> {
             namHienTai--;
             tvNam.setText(String.valueOf(namHienTai));
-//            loadBarChartData();
+            loadBarChartData();
         });
 
         btnNextYear.setOnClickListener(v -> {
             namHienTai++;
             tvNam.setText(String.valueOf(namHienTai));
-//            loadBarChartData();
+            loadBarChartData();
         });
     }
 
@@ -68,7 +68,7 @@ public class DoanhThuNhaSachActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         db = new DBHelper(this).getReadableDatabase();
-//        loadBarChartData();
+        loadBarChartData();
     }
 
     @Override
@@ -94,30 +94,30 @@ public class DoanhThuNhaSachActivity extends AppCompatActivity {
         barChart.setNoDataTextColor(Color.RED);
 
         // 1. Truy vấn dữ liệu từ database
-        String sql = "SELECT " +
-                "a.store_id_fk AS store_id, " +
-                "b.store_name, " +
-                "SUM(a.total_price) AS revenue, " + // Sử dụng total_price từ bảng Invoices
-                "CASE " +
-                "   WHEN strftime('%m', a.date) BETWEEN '01' AND '03' THEN 1 " +
-                "   WHEN strftime('%m', a.date) BETWEEN '04' AND '06' THEN 2 " +
-                "   WHEN strftime('%m', a.date) BETWEEN '07' AND '09' THEN 3 " +
-                "   ELSE 4 " +
-                "END AS quarter " +
-                "FROM Invoices a " +
-                "JOIN Bookstores b ON a.store_id_fk = b.store_id " +
-                "WHERE strftime('%Y', a.date) = ? " +
-                "GROUP BY a.store_id_fk, quarter " +
-                "ORDER BY a.store_id_fk, quarter";
+        String sql = "SELECT\n" +
+                "    a.idNS AS store_id,\n" +
+                "    b.tenNhaSach AS store_name,\n" +
+                "    SUM(a.totalMoney) AS revenue,\n" +
+                "    CASE\n" +
+                "        WHEN CAST(substr(a.ngayHD, 4, 2) AS INTEGER) BETWEEN 1 AND 3 THEN 1\n" +
+                "        WHEN CAST(substr(a.ngayHD, 4, 2) AS INTEGER) BETWEEN 4 AND 6 THEN 2\n" +
+                "        WHEN CAST(substr(a.ngayHD, 4, 2) AS INTEGER) BETWEEN 7 AND 9 THEN 3\n" +
+                "        ELSE 4\n" +
+                "    END AS quarter\n" +
+                "FROM Invoices a\n" +
+                "JOIN Bookstores b ON a.idNS = b.maNhaSach\n" +
+                "WHERE substr(a.ngayHD, 7, 4) = ?\n" +
+                "GROUP BY a.idNS, quarter\n" +
+                "ORDER BY a.idNS, quarter;";
 
         Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(namHienTai)});
 
         // 2. Xử lý dữ liệu
-        Map<Integer, String> storeNames = new HashMap<>();
-        Map<Integer, float[]> revenueData = new HashMap<>();
+        Map<String, String> storeNames = new HashMap<>();
+        Map<String, float[]> revenueData = new HashMap<>();
 
         while (cursor.moveToNext()) {
-            int storeId = cursor.getInt(0);
+            String storeId = cursor.getString(0);
             String storeName = cursor.getString(1);
             float revenue = cursor.getFloat(2);
             int quarter = cursor.getInt(3);
@@ -147,8 +147,8 @@ public class DoanhThuNhaSachActivity extends AppCompatActivity {
         List<String> storeLabels = new ArrayList<>();
 
         int index = 0;
-        for (Map.Entry<Integer, float[]> entry : revenueData.entrySet()) {
-            int storeId = entry.getKey();
+        for (Map.Entry<String, float[]> entry : revenueData.entrySet()) {
+            String storeId = entry.getKey();
             float[] quarterlyRevenue = entry.getValue();
 
             storeLabels.add(storeNames.get(storeId));
@@ -159,6 +159,7 @@ public class DoanhThuNhaSachActivity extends AppCompatActivity {
             index++;
         }
 
+
         // 4. Tạo dataset
         BarDataSet setQ1 = createDataSet(q1Entries, "Quý 1", Color.parseColor("#FFA000")); // Cam
         BarDataSet setQ2 = createDataSet(q2Entries, "Quý 2", Color.parseColor("#4CAF50")); // Xanh lá
@@ -166,26 +167,30 @@ public class DoanhThuNhaSachActivity extends AppCompatActivity {
         BarDataSet setQ4 = createDataSet(q4Entries, "Quý 4", Color.parseColor("#F44336")); // Đỏ
 
         BarData data = new BarData(setQ1, setQ2, setQ3, setQ4);
-        data.setValueFormatter(new CurrencyFormatter()); // Định dạng tiền tệ
+        data.setValueFormatter(new CurrencyFormatter());
 
         // 5. Cấu hình biểu đồ
         float barWidth = 0.1f;
-        float groupSpace = 0.4f;
+        float groupSpace = 0.3f;
         float barSpace = 0.05f;
-        float groupStart = 0f; // Định nghĩa groupStart
 
         barChart.setData(data);
         barChart.getBarData().setBarWidth(barWidth);
-        barChart.groupBars(-0.5f, groupSpace, barSpace); // Nhóm cột với groupStart
+        barChart.groupBars(-0.5f, groupSpace, barSpace); // Điều chỉnh groupBars bắt đầu từ 0
+
+        // Kích hoạt cuộn ngang
+        barChart.setDragEnabled(true); // Cho phép kéo
+        barChart.setScaleEnabled(false); // Tắt phóng to/thu nhỏ
+        barChart.setVisibleXRangeMaximum(2); // Hiển thị tối đa 2 nhà sách cùng lúc (giảm để dễ thấy hiệu ứng cuộn)
+        barChart.setVisibleXRangeMinimum(1); // Đảm bảo khung nhìn tối thiểu
+        barChart.moveViewToX(0); // Bắt đầu từ vị trí đầu tiên
 
         // Cấu hình trục X
         XAxis xAxis = barChart.getXAxis();
         xAxis.setValueFormatter(new IndexAxisValueFormatter(storeLabels));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setGranularity(1f); // Một nhãn cho mỗi nhóm
-        xAxis.setLabelCount(storeLabels.size());
+        xAxis.setGranularity(1f); // Khoảng cách giữa các nhãn
         xAxis.setLabelRotationAngle(-45);
-
 
         // Cấu hình trục Y
         YAxis leftAxis = barChart.getAxisLeft();

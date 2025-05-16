@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.nhom11.qlnhasach.model.Bill;
 import com.nhom11.qlnhasach.model.Book;
 import com.nhom11.qlnhasach.model.NhaSach;
 
@@ -51,14 +52,13 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_BOOK_TABLE);
 
         // Bảng Invoices
-//        String CREATE_INVOICE_TABLE = "CREATE TABLE " + TABLE_INVOICES + " (" +
-//                "soHD INTEGER PRIMARY KEY AUTOINCREMENT, " +
-//                "user_id_fk INTEGER, " +
-//                "maNhaSach INTEGER, " +
-//                "total_price REAL, " +
-//                "date TEXT, " +
-//                "FOREIGN KEY(store_id_fk) REFERENCES " + TABLE_BOOKSTORES + "(store_id))";
-//        db.execSQL(CREATE_INVOICE_TABLE);
+        String CREATE_INVOICE_TABLE = "CREATE TABLE " + TABLE_INVOICES + " (" +
+                "soHD TEXT PRIMARY KEY, " +
+                "idNS TEXT, " +
+                "totalMoney REAL, " +
+                "ngayHD TEXT, " +
+                "FOREIGN KEY(idNS) REFERENCES " + TABLE_BOOKSTORES + "(maNhaSach))";
+        db.execSQL(CREATE_INVOICE_TABLE);
 
         // Bảng trung gian InvoiceBooks
 //        String CREATE_INVOICE_BOOKS_TABLE = "CREATE TABLE " + TABLE_INVOICE_BOOKS + " (" +
@@ -166,36 +166,36 @@ public class DBHelper extends SQLiteOpenHelper {
             db.insert(TABLE_BOOKS, null, values);
         }
 
-        // Kiểm tra xem đã có dữ liệu trong bảng Bill chưa
-//        cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_INVOICES, null);
-//        cursor.moveToFirst();
-//        int billCount = cursor.getInt(0);
-//        cursor.close();
-//
-//        // Nếu chưa có dữ liệu hóa đơn
-//        if (billCount == 0) {
-//            // Thêm hóa đơn mẫu
-//            values.clear();
-//            values.put("soHD", "HD001");
-//            values.put("maNhaSach", "NS001");
-//            values.put("ngayHD", "01/01/2025 - 12:00");
-//            values.put("totalMoney", 123000);
-//            db.insert(TABLE_INVOICES, null, values);
-//
-//            values.clear();
-//            values.put("soHD", "HD002");
-//            values.put("maNhaSach", "NS002");
-//            values.put("ngayHD", "02/01/2025 - 15:30");
-//            values.put("totalMoney", 150000);
-//            db.insert(TABLE_INVOICES, null, values);
-//
-//            values.clear();
-//            values.put("soHD", "HD003");
-//            values.put("maNhaSach", "NS003");
-//            values.put("ngayHD", "03/01/2025 - 09:15");
-//            values.put("totalMoney", 56000);
-//            db.insert(TABLE_INVOICES, null, values);
+         //Kiểm tra xem đã có dữ liệu trong bảng Bill chưa
+        cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_INVOICES, null);
+        cursor.moveToFirst();
+        int billCount = cursor.getInt(0);
+        cursor.close();
 
+        // Nếu chưa có dữ liệu hóa đơn
+        if (billCount == 0) {
+            // Thêm hóa đơn mẫu
+            values.clear();
+            values.put("soHD", "HD001");
+            values.put("idNS", "NS001");
+            values.put("totalMoney", 123000);
+            values.put("ngayHD", "01/01/2025 - 12:00");
+            db.insert(TABLE_INVOICES, null, values);
+
+            values.clear();
+            values.put("soHD", "HD002");
+            values.put("idNS", "NS002");
+            values.put("totalMoney", 150000);
+            values.put("ngayHD", "02/01/2025 - 15:30");
+            db.insert(TABLE_INVOICES, null, values);
+
+            values.clear();
+            values.put("soHD", "HD003");
+            values.put("idNS", "NS003");
+            values.put("totalMoney", 56000);
+            values.put("ngayHD", "03/01/2025 - 09:15");
+            db.insert(TABLE_INVOICES, null, values);
+        }
             // Thêm chi tiết hóa đơn mẫu
 //            values.clear();
 //            values.put("soHD", "HD001");
@@ -256,6 +256,37 @@ public class DBHelper extends SQLiteOpenHelper {
         return nhaSachList;
     }
 
+    public long addBookStore(NhaSach nhaSach) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("maNhaSach", nhaSach.getMaNhaSach());
+        values.put("tenNhaSach", nhaSach.getTenNhaSach());
+        values.put("diaChi", nhaSach.getDiaChi());
+        values.put("iconUri", nhaSach.getIconUri());
+        long id = db.insert(DBHelper.TABLE_BOOKSTORES, null, values);
+        db.close();
+        return id;
+    }
+
+    public boolean updateBookStore(NhaSach nhaSach) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("tenNhaSach", nhaSach.getTenNhaSach());
+        values.put("diaChi", nhaSach.getDiaChi());
+        values.put("iconUri", nhaSach.getIconUri());
+        int rows = db.update(TABLE_BOOKSTORES, values, "maNhaSach = ?",
+                new String[]{nhaSach.getMaNhaSach()});
+        db.close();
+        return rows > 0;
+    }
+
+    public boolean deleteBookStore(String maNhaSach) {
+        SQLiteDatabase db = getWritableDatabase();
+        int rows = db.delete(TABLE_BOOKSTORES, "maNhaSach = ?", new String[]{maNhaSach});
+        db.close();
+        return rows > 0;
+    }
+
     //====================== Sách =====================
     public List<Book> getAllBooks() {
         List<Book> bookList = new ArrayList<>();
@@ -285,4 +316,66 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
         return bookList;
     }
+
+    public long addBook(Book book) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("maSach", book.getMaSach());
+        values.put("tenSach", book.getTenSach());
+        values.put("tacGia", book.getTacGia());
+        values.put("gia", book.getGia());
+        long id = db.insert(TABLE_BOOKS, null, values);
+        db.close();
+        return id;
+    }
+
+    //=================== Hóa đơn ===================
+    public List<Bill> getAllBills() {
+        List<Bill> billList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_INVOICES, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int soHDIndex = cursor.getColumnIndex("soHD");
+                int maNhaSachIndex = cursor.getColumnIndex("idNS");
+                int totalMoneyIndex = cursor.getColumnIndex("totalMoney");
+                int ngayHDIndex = cursor.getColumnIndex("ngayHD");
+
+                if (soHDIndex != -1 && maNhaSachIndex != -1 && ngayHDIndex != -1 && totalMoneyIndex != -1) {
+                    String soHD = cursor.getString(soHDIndex);
+                    String maNhaSach = cursor.getString(maNhaSachIndex);
+                    double totalMoney = cursor.getDouble(totalMoneyIndex);
+                    String ngayHD = cursor.getString(ngayHDIndex);
+
+                    Bill bill = new Bill(soHD, maNhaSach, totalMoney, ngayHD);
+                    billList.add(bill);
+                }
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return billList;
+    }
+
+    public long addBill(Bill bill) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("soHD", bill.getSoHD());
+        values.put("idNS", bill.getIdNS());
+        values.put("totalMoney", bill.getTotalMoney());
+        values.put("ngayHD", bill.getNgayHD());
+        long id = db.insert(TABLE_INVOICES, null, values);
+        db.close();
+        return id;
+    }
+
+    public boolean deleteBill(String soHD){
+        SQLiteDatabase db = getWritableDatabase();
+        int rows = db.delete(TABLE_INVOICES, "soHD=?", new String[]{soHD});
+        db.close();
+        return rows > 0;
+    }
+
 }

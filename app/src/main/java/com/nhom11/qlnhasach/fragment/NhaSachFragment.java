@@ -82,6 +82,10 @@ public class NhaSachFragment extends Fragment implements NhaSachAdapter.OnItemCl
 
         buttonDelete.setOnClickListener(v -> {
             if (selectedNhaSach != null) {
+
+                // Xóa nhà sách khỏi DB
+                new DBHelper(requireContext()).deleteBookStore(selectedNhaSach.getMaNhaSach());
+
                 nhaSachList.remove(selectedNhaSach);
                 adapter.notifyDataSetChanged();
                 selectedNhaSach = null;
@@ -130,5 +134,12 @@ public class NhaSachFragment extends Fragment implements NhaSachAdapter.OnItemCl
         selectedNhaSach = nhaSach;
         buttonEdit.setEnabled(true);
         buttonDelete.setEnabled(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        buttonEdit.setEnabled(false);
+        buttonDelete.setEnabled(false);
     }
 }

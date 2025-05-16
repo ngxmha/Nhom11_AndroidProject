@@ -1,5 +1,6 @@
 package com.nhom11.qlnhasach.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,14 +10,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nhom11.qlnhasach.R;
+import com.nhom11.qlnhasach.activity.DBHelper;
 import com.nhom11.qlnhasach.model.Bill;
+import com.nhom11.qlnhasach.model.NhaSach;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class BillAdapter extends RecyclerView.Adapter<BillAdapter.BillViewHolder> {
+    Context context;
     private List<Bill> billList;
 
-    public BillAdapter(List<Bill> billList) {
+    public BillAdapter(Context context, List<Bill> billList) {
+        this.context = context;
         this.billList = billList;
     }
 
@@ -31,9 +38,17 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.BillViewHolder
     public void onBindViewHolder(@NonNull BillViewHolder holder, int position) {
         Bill bill = billList.get(position);
         holder.tvSoHD.setText(bill.getSoHD());
-        holder.tvTenNS.setText(bill.getTenNS());
-        holder.tvTotalMoney.setText(bill.getTotalMoney());
+        String tenNS = "";
+        for(NhaSach ns : new DBHelper(context).getAllBookstores()){
+            if(ns.getMaNhaSach().equals(bill.getIdNS())){
+                holder.tvTenNS.setText(ns.getTenNhaSach());
+                break;
+            }
+        }
+        NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
+        holder.tvTotalMoney.setText(formatter.format(bill.getTotalMoney()) + " VNĐ");
         holder.tvNgayHD.setText(bill.getNgayHD());
+        holder.itemView.setLongClickable(true);
     }
 
     @Override

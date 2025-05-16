@@ -60,7 +60,10 @@ public class BookFormActivity extends AppCompatActivity {
             }
 
             Book newBook = new Book(maSach, tenSach, tacGia, gia);
-            bookList.add(newBook);
+
+            // Thêm sách vào DB
+            new DBHelper(BookFormActivity.this).addBook(newBook);
+
             Toast.makeText(this, "Đã thêm sách: " + newBook.getTenSach(), Toast.LENGTH_SHORT).show();
 
             finish(); // Quay lại BookFragment

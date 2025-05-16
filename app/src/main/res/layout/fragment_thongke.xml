@@ -20,12 +20,13 @@
         android:gravity="center"
         android:layout_marginTop="24dp" />
 
-    <!-- Nút Theo nhà thuốc -->
+    <!-- Nút Theo nhà sách -->
     <LinearLayout
         android:id="@+id/btnTheoNhaSach"
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:layout_below="@id/tvTitle"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="36dp"
         android:layout_marginStart="32dp"
         android:orientation="vertical"
@@ -47,32 +48,5 @@
             android:layout_marginTop="8dp"/>
     </LinearLayout>
 
-    <!-- Nút Theo loại thuốc -->
-    <LinearLayout
-        android:id="@+id/btnTheoSach"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:layout_below="@id/tvTitle"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="32dp"
-        android:orientation="vertical"
-        android:background="@drawable/bg_button_green"
-        android:gravity="center"
-        android:padding="16dp">
-
-        <ImageView
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:src="@drawable/sach" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Theo loại sách"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp"/>
-    </LinearLayout>
 
 </RelativeLayout>
